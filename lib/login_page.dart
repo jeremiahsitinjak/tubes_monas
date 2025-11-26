@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tubes_monas/register_page.dart';
-import 'home_page.dart';
+import 'package:tubes_monas/user/nav.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -242,7 +242,7 @@ class _FormLoginState extends State<_FormLogin> {
                 // Jika validasi berhasil, navigasi ke HomePage
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
+                  MaterialPageRoute(builder: (context) => const NavPage()),
                 );
 
               },
