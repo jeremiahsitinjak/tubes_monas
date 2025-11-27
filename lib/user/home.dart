@@ -27,18 +27,17 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A17),
+      backgroundColor: Colors.white,
 
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A17),
+        backgroundColor: Colors.blue,
         elevation: 0,
         automaticallyImplyLeading: false, // HILANGKAN TOMBOL BACK
         title: const Text(
-          "Celenganku",
+          "Home",
           style: TextStyle(color: Colors.white),
         ),
       ),
-
 
       body: buildListContent(),
 
@@ -47,11 +46,11 @@ class _HomePageState extends State<HomePage>
         height: 55,
         child: FloatingActionButton.extended(
           onPressed: () {},
-          backgroundColor: const Color(0xFFC3B54A),
+          backgroundColor: Colors.blue,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           label: const Text(
             " +  Tambah Celengan",
-            style: TextStyle(color: Colors.black, fontSize: 16),
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ),
       ),
@@ -59,9 +58,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  // ==============================
   // CONTENT VIEW
-  // ==============================
   Widget buildListContent() {
     return Column(
       children: [
@@ -82,11 +79,11 @@ class _HomePageState extends State<HomePage>
 
         Column(
           children: [
-            Icon(Icons.list, color: const Color(0xFFC3B54A), size: 45),
+            Icon(Icons.list, color: Colors.black, size: 60),
             const SizedBox(height: 10),
             const Text(
               "Tidak ada data untuk ditampilkan.",
-              style: TextStyle(color: Colors.white70, fontSize: 15),
+              style: TextStyle(color: Colors.black, fontSize: 20),
             ),
           ],
         ),
@@ -94,20 +91,19 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  // ==============================
   // DROPDOWN WIDGETS
-  // ==============================
   Widget buildDropdownNominal() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF2E2E28),
+        color:  Colors.blue,
         borderRadius: BorderRadius.circular(8),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: _filterNominal,
-          dropdownColor: const Color(0xFF2E2E28),
+          dropdownColor: Colors.blue,
+          borderRadius: BorderRadius.circular(8),
           icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
           style: const TextStyle(color: Colors.white),
           items: nominalList.map((value) {
@@ -130,13 +126,13 @@ class _HomePageState extends State<HomePage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF2E2E28),
+        color: Colors.blue,
         borderRadius: BorderRadius.circular(8),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: _filterUrutan,
-          dropdownColor: const Color(0xFF2E2E28),
+          dropdownColor: Colors.blue,
           icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
           style: const TextStyle(color: Colors.white),
           items: urutanList.map((value) {

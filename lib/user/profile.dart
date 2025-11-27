@@ -4,13 +4,74 @@ class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   // Data dummy
-  final String userName = "Anna Avetisyan";
-  final String userEmail = "info@aplusdesign.co";
-  final String profileImageUrl = 'https://via.placeholder.com/150';
+  final String userName = "Anna Ann";
+  final String userEmail = "user@gmail.com";
+  final String profileImageUrl = 'assets/images/logo_monas.png'; // Temporary
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      // Appbar Profile
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        elevation: 0,
+        automaticallyImplyLeading: false, // HILANGKAN TOMBOL BACK
+        title: const Text(
+          "Profile",
+          style: TextStyle(color: Colors.white),
+        ),
+
+        // Tombol Logout di AppBar
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.logout, 
+              color: Colors.white
+            ),
+            onPressed: () {
+                // --- LOGIKA ALERT DI SINI ---
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("Konfirmasi Logout"),
+                    content: const Text("Apakah Anda yakin ingin keluar (logout)?"),
+                    actions: <Widget>[
+                      // Tombol NO (Membatalkan)
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Tutup dialog
+                        },
+                        child: const Text("TIDAK", style: TextStyle(color: Colors.grey)),
+                      ),
+                      // Tombol YES (Melanjutkan Logout)
+                      TextButton(
+                        onPressed: () {
+                          // Tutup dialog
+                          Navigator.of(context).pop(); 
+                          
+                          // TODO Tambahkan logika logout dan navigasi ke halaman login di sini
+                          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                          
+                          // Notifikasi untuk sementara
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Anda Berhasil Logout!')),
+                          );
+                        },
+                        child: const Text("YA", style: TextStyle(color: Colors.blue)),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+            },
+          ),
+        ],
+
+      ),
+
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -18,20 +79,23 @@ class ProfilePage extends StatelessWidget {
             Container(
               height: 200,
               width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 40),
               decoration: BoxDecoration(
                 // Menggunakan satu warna solid biru
                 color: Colors.blue,
               ),
+
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   // Profile Picture
                   Positioned(
+                    // top:20,
                     child: CircleAvatar(
-                      radius: 50,
+                      radius: 60,
                       backgroundColor: Colors.white, // Border putih
                       child: CircleAvatar(
-                        radius: 47,
+                        radius: 54,
                         backgroundImage: NetworkImage(profileImageUrl),
                         backgroundColor: Colors.grey.shade200,
                         child: profileImageUrl.isEmpty
@@ -40,11 +104,10 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
+
                 ],
               ),
             ),
-            
-            const SizedBox(height: 60), 
 
             // Bagian Informasi (Nama dan Email)
             _buildProfileInfoTile(
@@ -63,7 +126,7 @@ class ProfilePage extends StatelessWidget {
             ),
             const Divider(indent: 16, endIndent: 16),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 40),
 
             // Tombol Edit Profile (Warna Solid Colors.blue)
             Padding(

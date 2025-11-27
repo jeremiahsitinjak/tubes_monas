@@ -8,10 +8,13 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 25, 75, 175),
+      backgroundColor: Colors.blue,
       body: SingleChildScrollView(
-        child: Column(children: [_HeaderTampilan(), _FormLogin()]),
+        child: Column(
+          children: [_HeaderTampilan(), _FormLogin()]),
       ),
     );
   }
@@ -223,6 +226,7 @@ class _FormLoginState extends State<_FormLogin> {
             ],
           ),
 
+          const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -298,31 +302,33 @@ Row(
   ],
 ),
 
-          Row(
-            children: [
-              Expanded(child: Divider()),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text('OR'),
-              ),
-              Expanded(child: Divider()),
-            ],
-          ),
-          SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _socialMediaButton(
-                icon: Icons.facebook,
-                color: Color(0xFF395998),
-              ),
-              _socialMediaButton(icon: Icons.apple, color: Color(0xFF1B1F2F)),
-              _socialMediaButton(
-                icon: Icons.add_shopping_cart,
-                color: Color(0xFF169CE8),
-              ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     Expanded(child: Divider()),
+          //     Padding(
+          //       padding: EdgeInsets.symmetric(horizontal: 10),
+          //       child: Text('OR'),
+          //     ),
+          //     Expanded(child: Divider()),
+          //   ],
+          // ),
+
+          // SizedBox(height: 15),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     _socialMediaButton(
+          //       icon: Icons.facebook,
+          //       color: Color(0xFF395998),
+          //     ),
+          //     _socialMediaButton(icon: Icons.apple, color: Color(0xFF1B1F2F)),
+          //     _socialMediaButton(
+          //       icon: Icons.add_shopping_cart,
+          //       color: Color(0xFF169CE8),
+          //     ),
+          //   ],
+          // ),
+
         ],
       ),
     );

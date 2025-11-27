@@ -26,7 +26,7 @@ class LandingPage extends StatelessWidget {
                       width: 150.0,
                       height: 150.0,
                       decoration: BoxDecoration(
-                        color: Colors.blueAccent,
+                        color: Colors.blue,
                         shape: BoxShape.circle,
                       ),
 
@@ -47,12 +47,12 @@ class LandingPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: Colors.black,
                       ),
                     ),
                     const SizedBox(height: 15),
                     Text(
-                      'Mari berkontribusi dan ciptakan perubahan nyata bersama kami.',
+                      'Mari menabung untuk masa depan yang lebih cerah.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,

@@ -30,6 +30,8 @@ class _NavPageState extends State<NavPage> {
             _selectedIndex = index;
           });
         },
+        selectedItemColor: Colors.blueAccent, // Mengatur warna item yang dipilih menjadi biru
+        unselectedItemColor: Colors.grey, // Opsional: Mengatur warna item yang tidak dipilih
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

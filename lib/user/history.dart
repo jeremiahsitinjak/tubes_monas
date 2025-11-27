@@ -25,14 +25,14 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A17),
+      backgroundColor: Colors.white,
 
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A17),
+        backgroundColor: Colors.blue,
         elevation: 0,
         automaticallyImplyLeading: false, // HILANGKAN TOMBOL BACK
         title: const Text(
-          "Riwayat Celengan",
+          "History",
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -44,92 +44,98 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget buildListContent() {
     return Column(
       children: [
-        const SizedBox(height: 10),
+        // const SizedBox(height: 20),
 
         // Dropdown filter
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Row(
-            children: [
-              Expanded(child: buildDropdownNominal()),
-              const SizedBox(width: 10),
-              Expanded(child: buildDropdownUrutan()),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 60),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(horizontal: 12),
+        //   child: Row(
+        //     children: [
+        //       Expanded(child: buildDropdownNominal()),
+        //       const SizedBox(width: 10),
+        //       Expanded(child: buildDropdownUrutan()),
+        //     ],
+        //   ),
+        // ),
 
         // Empty state
-        Column(
-          children: [
-            Icon(Icons.list, color: const Color(0xFFC3B54A), size: 45),
-            const SizedBox(height: 10),
-            const Text(
-              "Tidak ada data untuk ditampilkan.",
-              style: TextStyle(color: Colors.white70, fontSize: 15),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(Icons.list, color: Colors.black, size: 60),
+                const SizedBox(height: 10),
+                const Text(
+                  "Tidak ada data untuk ditampilkan.",
+                  style: TextStyle(color: Colors.black, fontSize: 20),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ],
     );
   }
 
-  Widget buildDropdownNominal() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2E2E28),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: _filterNominal,
-          dropdownColor: const Color(0xFF2E2E28),
-          icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-          style: const TextStyle(color: Colors.white),
-          items: nominalList.map((value) {
-            return DropdownMenuItem(
-              value: value,
-              child: Text(value, style: const TextStyle(color: Colors.white)),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              _filterNominal = value!;
-            });
-          },
-        ),
-      ),
-    );
-  }
+  // Widget buildDropdownNominal() {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 12),
+  //     decoration: BoxDecoration(
+  //       color: Colors.blue,
+  //       borderRadius: BorderRadius.circular(8),
+  //     ),
+  //     child: DropdownButtonHideUnderline(
+  //       child: DropdownButton<String>(
+  //         value: _filterNominal,
+  //         dropdownColor: Colors.blue,
+  //         borderRadius: BorderRadius.circular(8),
+  //         icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+  //         style: const TextStyle(color: Colors.white),
+  //         items: nominalList.map((value) {
+  //           return DropdownMenuItem(
+  //             value: value,
+  //             child: Text(value, style: const TextStyle(color: Colors.white)),
+  //           );
+  //         }).toList(),
+  //         onChanged: (value) {
+  //           setState(() {
+  //             _filterNominal = value!;
+  //           });
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget buildDropdownUrutan() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2E2E28),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: _filterUrutan,
-          dropdownColor: const Color(0xFF2E2E28),
-          icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-          style: const TextStyle(color: Colors.white),
-          items: urutanList.map((value) {
-            return DropdownMenuItem(
-              value: value,
-              child: Text(value, style: const TextStyle(color: Colors.white)),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              _filterUrutan = value!;
-            });
-          },
-        ),
-      ),
-    );
-  }
+  // Widget buildDropdownUrutan() {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 12),
+  //     decoration: BoxDecoration(
+  //       color: Colors.blue,
+  //       borderRadius: BorderRadius.circular(8),
+  //     ),
+  //     child: DropdownButtonHideUnderline(
+  //       child: DropdownButton<String>(
+  //         value: _filterUrutan,
+  //         dropdownColor: Colors.blue,
+  //         borderRadius: BorderRadius.circular(8),
+  //         icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+  //         style: const TextStyle(color: Colors.white),
+  //         items: urutanList.map((value) {
+  //           return DropdownMenuItem(
+  //             value: value,
+  //             child: Text(value, style: const TextStyle(color: Colors.white)),
+  //           );
+  //         }).toList(),
+  //         onChanged: (value) {
+  //           setState(() {
+  //             _filterUrutan = value!;
+  //           });
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 }
