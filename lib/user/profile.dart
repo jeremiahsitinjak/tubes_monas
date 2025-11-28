@@ -1,12 +1,19 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-class ProfilePage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:tubes_monas/user/edit_profile.dart';
+
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
-  // Data dummy
-  final String userName = "Anna Ann";
-  final String userEmail = "user@gmail.com";
-  final String profileImageUrl = 'assets/images/logo_monas.png'; // Temporary
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String userName = "Anna Ann";
+  String userEmail = "user@gmail.com";
+  String? profileImagePath = 'assets/images/logo_monas.png';
 
   @override
   Widget build(BuildContext context) {
@@ -96,9 +103,9 @@ class ProfilePage extends StatelessWidget {
                       backgroundColor: Colors.white, // Border putih
                       child: CircleAvatar(
                         radius: 54,
-                        backgroundImage: NetworkImage(profileImageUrl),
+                        backgroundImage: _buildProfileImage(),
                         backgroundColor: Colors.grey.shade200,
-                        child: profileImageUrl.isEmpty
+                        child: profileImagePath == null
                             ? const Icon(Icons.person, size: 60, color: Colors.grey)
                             : null,
                       ),
@@ -134,10 +141,25 @@ class ProfilePage extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Edit profile pressed')),
+                  onPressed: () async {
+                    final updatedData = await Navigator.push<Map<String, String>>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EditProfilePage(
+                          initialName: userName,
+                          initialEmail: userEmail,
+                          initialImagePath: profileImagePath,
+                        ),
+                      ),
                     );
+
+                    if (updatedData != null) {
+                      setState(() {
+                        userName = updatedData['name'] ?? userName;
+                        userEmail = updatedData['email'] ?? userEmail;
+                        profileImagePath = updatedData['image'] ?? profileImagePath;
+                      });
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     // Menggunakan warna solid Colors.blue
@@ -187,5 +209,19 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  ImageProvider _buildProfileImage() {
+    final path = profileImagePath;
+    if (path == null || path.isEmpty) {
+      return const AssetImage('assets/images/logo_monas.png');
+    }
+    if (path.startsWith('assets/')) {
+      return AssetImage(path);
+    }
+    if (path.startsWith('http')) {
+      return NetworkImage(path);
+    }
+    return FileImage(File(path));
   }
 }
