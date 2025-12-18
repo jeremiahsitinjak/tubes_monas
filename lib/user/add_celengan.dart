@@ -214,6 +214,15 @@ class _AddCelenganPageState extends State<AddCelenganPage> {
     try {
       double target = double.parse(
           targetController.text.replaceAll(RegExp(r'[^0-9]'), ''));
+
+      // Batasi target maksimal 1 miliar
+      if (target > 1000000000) {
+        target = 1000000000;
+        targetController.text = target.toStringAsFixed(0);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Melebihi batas maksimal'),
+            backgroundColor: Colors.orange));
+      }
       final now = DateTime.now();
       int daysRemaining = targetDate!.difference(now).inDays;
 
@@ -793,10 +802,17 @@ class _AddCelenganPageState extends State<AddCelenganPage> {
   }
 
   void pickDate() async {
+    final DateTime today = DateTime.now();
+    // H dan H+1 di-disable dengan cara menjadikan batas minimum pilihan = H+2.
+    final DateTime minSelectableDate =
+        DateTime(today.year, today.month, today.day).add(const Duration(days: 2));
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: targetDate ?? DateTime.now().add(const Duration(days: 1)),
-      firstDate: DateTime.now(),
+      initialDate: targetDate != null && targetDate!.isAfter(minSelectableDate)
+          ? targetDate!
+          : minSelectableDate,
+      firstDate: minSelectableDate,
       lastDate: DateTime(2030),
       builder: (context, child) {
         return Theme(
@@ -991,6 +1007,22 @@ class _AddCelenganPageState extends State<AddCelenganPage> {
         targetDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Semua field wajib diisi'),
+          backgroundColor: Colors.red));
+      return;
+    }
+    // Validasi maksimum target 1 miliar di sisi Flutter
+    try {
+      final rawTarget =
+          double.parse(targetController.text.replaceAll(RegExp(r'[^0-9]'), ''));
+      if (rawTarget > 1000000000) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Melebihi batas maksimal'),
+            backgroundColor: Colors.red));
+        return;
+      }
+    } catch (_) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Target tabungan tidak valid'),
           backgroundColor: Colors.red));
       return;
     }

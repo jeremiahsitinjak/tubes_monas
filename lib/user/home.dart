@@ -7,6 +7,7 @@ import 'package:tubes_monas/user/celengan_detail.dart';
 import 'package:tubes_monas/models/celengan.dart';
 import 'package:intl/intl.dart';
 import 'package:tubes_monas/models/constants.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,10 +27,23 @@ class _HomePageState extends State<HomePage>
   List<Celengan> _celenganList = [];
   bool _isLoading = true;
 
+  final FlutterLocalNotificationsPlugin _notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  final Set<int> _overdueNotifiedIds = {};
+
   @override
   void initState() {
     super.initState();
+    _initNotifications();
     _loadCelengan();
+  }
+
+  Future<void> _initNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await _notificationsPlugin.initialize(initializationSettings);
   }
 
   Future<void> _loadCelengan() async {
@@ -64,6 +78,9 @@ class _HomePageState extends State<HomePage>
           _celenganList = data.map((json) => Celengan.fromJson(json)).toList();
           _isLoading = false;
         });
+
+        // Setelah data dimuat, cek celengan yang sudah lewat deadline tapi belum lunas
+        _checkOverdueAndNotify();
       } else {
         setState(() => _isLoading = false);
       }
@@ -71,6 +88,44 @@ class _HomePageState extends State<HomePage>
       debugPrint('Error loading celengan: $e');
       setState(() => _isLoading = false);
     }
+  }
+
+  bool _isOverdue(Celengan c) {
+    if (c.targetDate == null) return false;
+    final now = DateTime.now();
+    return now.isAfter(c.targetDate!) && c.nominalTerkumpul < c.target;
+  }
+
+  Future<void> _checkOverdueAndNotify() async {
+    for (final c in _celenganList) {
+      if (c.id == null) continue;
+      if (_isOverdue(c) && !_overdueNotifiedIds.contains(c.id)) {
+        await _showOverdueNotification(c);
+        _overdueNotifiedIds.add(c.id!);
+      }
+    }
+  }
+
+  Future<void> _showOverdueNotification(Celengan c) async {
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'overdue_channel',
+      'Celengan Over Deadline',
+      channelDescription:
+          'Notifikasi untuk celengan yang melewati deadline tapi belum lunas',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails platformDetails =
+        NotificationDetails(android: androidDetails);
+
+    await _notificationsPlugin.show(
+      // gunakan id celengan supaya unik per tabungan
+      c.id ?? DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      'Deadline Tabungan Terlewati',
+      'Celengan "${c.nama}" sudah melewati target tapi belum lunas. Yuk review lagi rencanamu!',
+      platformDetails,
+    );
   }
 
   double get _totalAllSavings {
@@ -406,6 +461,7 @@ class _HomePageState extends State<HomePage>
     final imageUrl = _resolveImageUrl(celengan.imagePath);
     final progress = celengan.progress;
     final progressPercent = (progress * 100).toStringAsFixed(0);
+    final bool isOverdue = _isOverdue(celengan);
 
     return GestureDetector(
       onTap: () => _openCelenganDetail(celengan),
@@ -460,15 +516,51 @@ class _HomePageState extends State<HomePage>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: Text(
-                                celengan.nama,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    celengan.nama,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  if (isOverdue)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 3),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(999),
+                                          border: Border.all(
+                                              color: Colors.redAccent, width: 0.8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: const [
+                                            Icon(Icons.warning_amber_rounded,
+                                                size: 14, color: Colors.redAccent),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              'Over Deadline',
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.redAccent,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                             PopupMenuButton<String>(

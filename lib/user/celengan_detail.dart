@@ -150,17 +150,42 @@ class _CelenganDetailPageState extends State<CelenganDetailPage> {
     );
 
     if (result == true) {
-      final amount = amountController.text.trim();
+      final amountText = amountController.text.trim();
       final description = descriptionController.text.trim();
-      if (amount.isEmpty) {
+      if (amountText.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Nominal wajib diisi')),
         );
         return;
       }
+
+      // Validasi maksimum setoran 1 milyar di sisi Flutter
+      try {
+        final parsedAmount = double.parse(
+            amountText.replaceAll(RegExp(r'[^0-9]'), ''));
+        if (parsedAmount > 1000000000) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Melebihi batas maksimal'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+      } catch (_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Nominal setoran tidak valid'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       await _submitTransaction(
         type: type,
-        amount: amount,
+        amount: amountText,
         description: description,
       );
     }
@@ -215,15 +240,27 @@ class _CelenganDetailPageState extends State<CelenganDetailPage> {
 
         if (type == 'deposit' && _currentBalance >= widget.celengan.target) {
           try {
+            // Batalkan semua notifikasi pengingat terjadwal untuk celengan ini
+            // agar setelah target tercapai tidak ada pengingat lagi.
+            if (widget.celengan.id != null) {
+              await flutterLocalNotificationsPlugin
+                  .cancel(widget.celengan.id!);
+            }
+          } catch (e) {
+            debugPrint('Gagal membatalkan notifikasi terjadwal: $e');
+          }
+
+          try {
             const AndroidNotificationDetails androidPlatformChannelSpecifics =
-            AndroidNotificationDetails(
+                AndroidNotificationDetails(
               'target_channel',
               'Target Channel',
               importance: Importance.max,
               priority: Priority.high,
             );
             const NotificationDetails platformChannelSpecifics =
-            NotificationDetails(android: androidPlatformChannelSpecifics);
+                NotificationDetails(
+                    android: androidPlatformChannelSpecifics);
 
             await flutterLocalNotificationsPlugin.show(
               0,
@@ -309,6 +346,13 @@ class _CelenganDetailPageState extends State<CelenganDetailPage> {
       );
 
       if (response.statusCode == 200) {
+        // Berhasil menghapus di server, sekarang batalkan juga pengingat lokal
+        try {
+          await flutterLocalNotificationsPlugin.cancel(widget.celengan.id!);
+        } catch (e) {
+          debugPrint('Gagal membatalkan notifikasi saat hapus celengan: $e');
+        }
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
